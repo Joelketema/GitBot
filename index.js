@@ -99,7 +99,7 @@ bot.on('text',  (ctx) => {
                  
                     
                         } catch (e) {
-                            console.log(e)
+                            console.log(ctx.reply("Repo Size too Big:("))
                         }
                   
                     
