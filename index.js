@@ -124,14 +124,13 @@ bot.on('text',  (ctx) => {
 }) 
 
 
-bot.startWebhook(process.env.HEROKU_URL + process.env.BOT_TOKEN);
+bot.setWebhook(process.env.HEROKU_URL + process.env.BOT_TOKEN);
 bot.launch()
 
 const Port = process.env.PORT || 3001 
 
 app.post(`/${process.env.BOT_TOKEN}`, (req, res) => {
-    bot.processUpdate(req.body);
-
+    bot.handleUpdate(req.body);
 });
 
 app.get("/", (res, req) => {
