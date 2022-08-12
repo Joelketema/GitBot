@@ -1,6 +1,7 @@
 import { Telegraf } from 'telegraf'
 import env from "dotenv/config"
 import { Octokit, App } from "octokit";
+import express  from 'express';
 import https from 'https'; 
 import fs from 'fs';
 import path from "path"
@@ -14,7 +15,7 @@ const __dirname = dirname(__filename);
 const bot = new Telegraf(process.env.BOT_TOKEN) 
 const url = "https://github.com";
 
-
+const app = express();
   
 var owner = "";
 var repo = "";
@@ -113,5 +114,8 @@ bot.on('text',  (ctx) => {
 
 bot.launch()
 
+const Port = process.env.PORT || 3001 
 
-
+app.listen(Port, () => {
+    console.log("Server Started")
+})
