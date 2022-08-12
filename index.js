@@ -130,10 +130,11 @@ bot.launch()
 const Port = process.env.PORT || 3001 
 
 app.post(`/${process.env.BOT_TOKEN}`, (req, res) => {
+    console.log("inside")
     bot.handleUpdate(req.body);
 });
 
-app.get("/", (res, req) => {
+app.get("/", (req, res) => {
     res.send("Server is Live")
 })
 
