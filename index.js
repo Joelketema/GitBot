@@ -53,7 +53,7 @@ bot.on('text',  (ctx) => {
                 }).then(response => {
                     
                     try {
-                        ctx.reply(response.url)
+                        
                         const file = fs.createWriteStream(`./downloads/file${ctx.chat.id}.zip`);
 
                         const request = https.get(response.url, function(res) {
