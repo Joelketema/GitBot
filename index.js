@@ -65,10 +65,14 @@ bot.on('text',  (ctx) => {
                             let filePath = path.join(__dirname,`./downloads/file${ctx.chat.id}.zip`);
                             fs.readFile(filePath, (err, data) => {
                                 if (!err) {
-                                    // ctx.telegram.sendDocument(ctx.chat.id, data)
-                                    ctx.reply("done")
+                                    ctx.telegram.sendDocument(ctx.chat.id, {
+                                        source: data,
+                                        filename:`${owner}-${repo}.zip`
+                                    })
+                                   
                                     fs.unlink(filePath, () => {
-                                        console.log("deleted")
+                                        ctx.reply("Successfully Completed!")
+                                       
                                     })
                                 }
                                 else {
