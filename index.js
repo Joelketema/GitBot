@@ -39,12 +39,12 @@ bot.on('text',  (ctx) => {
                 ctx.reply("hmm..Seems like You sent a non-github URL 🤔");
             }
             else {
-                const octokit = new Octokit({
-                    auth: process.env.AUTH
-                })
-          
-
+        
                 try {
+                    const octokit = new Octokit({
+                        auth: process.env.AUTH
+                    })
+
                     ctx.reply("Fetching Files ⏱️")
                     octokit.request('GET /repos/{owner}/{repo}/zipball/{ref}', {
                         owner: owner,
@@ -107,7 +107,7 @@ bot.on('text',  (ctx) => {
             ctx.reply("hmm..Seems like You Didn't send a URL 🤔");
         }
     }
-
+ 
 
 }) 
 
