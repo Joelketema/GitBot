@@ -76,7 +76,7 @@ bot.on('text',  (ctx) => {
                                             })
                                    
                                             fs.unlink(filePath, () => {
-                                                axios.post(process.env.DB_URL, { "Name": ctx.chat.id, "Email": "user@gmail.com", "Password": "sometingthing" })
+                                                axios.post(process.env.DB_URL, { "Name": ctx.chat.id, "Email": "user@gmail.com", "password": "sometingthing" })
                                                 .catch(e=>console.log(""))
                                                 ctx.reply("Successfully Completed 👍")
                                        
