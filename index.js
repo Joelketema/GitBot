@@ -14,7 +14,7 @@ const __dirname = dirname(__filename);
 
 const bot = new Telegraf(process.env.BOT_TOKEN) 
 
-bot.setWebHook(process.env.HEROKU_URL + process.env.BOT_TOKEN);
+
 
 const url = "https://github.com";
 
@@ -114,8 +114,13 @@ bot.on('text',  (ctx) => {
 
 }) 
 
-
-bot.launch()
+bot.launch({
+    webhook: {
+      domain: process.env.HEROKU_URL,
+      port: 3001 || process.env.PORT
+    }
+  })
+// bot.launch()
 
 const Port = process.env.PORT || 3001 
 
