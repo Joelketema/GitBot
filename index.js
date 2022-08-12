@@ -13,6 +13,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const bot = new Telegraf(process.env.BOT_TOKEN) 
+
+bot.setWebHook(process.env.HEROKU_URL + process.env.BOT_TOKEN);
+
 const url = "https://github.com";
 
 const app = express();
@@ -115,6 +118,15 @@ bot.on('text',  (ctx) => {
 bot.launch()
 
 const Port = process.env.PORT || 3001 
+
+app.post(`/${process.env.BOT_TOKEN}`, (req, res) => {
+    bot.processUpdate(req.body);
+    res.status(200).json({ message: 'ok' });
+});
+
+app.get("/", (res, req) => {
+    res.send("Server is Live")
+})
 
 app.listen(Port, () => {
     console.log("Server Started")
