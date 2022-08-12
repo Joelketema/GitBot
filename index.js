@@ -54,7 +54,7 @@ bot.on('text',  (ctx) => {
                     
                         try {
                         
-                            const file = fs.createWriteStream(`./downloads/file${ctx.chat.id}.zip`);
+                            const file = fs.createWriteStream(`/app/downloads/file${ctx.chat.id}.zip`);
 
                             const request = https.get(response.url, function (res) {
                                 res.pipe(file);
@@ -62,7 +62,7 @@ bot.on('text',  (ctx) => {
                                 file.on("finish", () => {
                                     file.close();
                         
-                                    let filePath = path.join(__dirname, `./downloads/file${ctx.chat.id}.zip`);
+                                    let filePath = path.join(__dirname, `/app/downloads/file${ctx.chat.id}.zip`);
                                     fs.readFile(filePath, (err, data) => {
                                         if (!err) {
                                             ctx.telegram.sendDocument(ctx.chat.id, {
