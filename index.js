@@ -114,19 +114,20 @@ bot.on('text',  (ctx) => {
 
 }) 
 
-bot.launch({
-    webhook: {
-      domain: process.env.HEROKU_URL,
-      port: 3001 || process.env.PORT
-    }
-  })
-// bot.launch()
+// bot.launch({
+//     webhook: {
+//       domain: process.env.HEROKU_URL,
+//       port: 3001 || process.env.PORT
+//     }
+//   })
+bot.startWebhook(process.env.HEROKU_URL);
+bot.launch()
 
 const Port = process.env.PORT || 3001 
 
 app.post(`/${process.env.BOT_TOKEN}`, (req, res) => {
     bot.processUpdate(req.body);
-    res.status(200).json({ message: 'ok' });
+   
 });
 
 app.get("/", (res, req) => {
