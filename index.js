@@ -19,9 +19,9 @@ const url = "https://github.com";
 var owner = "";
 var repo = "";
 
-bot.start((ctx) => ctx.reply('Welcome! Please Send me a Github Repo to Start'))
+bot.start((ctx) => ctx.reply('Welcome! Please Send me a Github Repo URL to Start 👋'))
 
-bot.help((ctx) => ctx.reply('Please Send me a Github Repo to Start'))
+bot.help((ctx) => ctx.reply('Please Send me a Github Repo URL like(https://github.com/owner/repo) to Start'))
 
 bot.on('text',  (ctx) => {
     const input = ctx.message.text;
@@ -35,7 +35,7 @@ bot.on('text',  (ctx) => {
 
         if(URLcheck.origin !== url)
         {
-            ctx.reply("hmm..Seems like You sent a non-github URL");
+            ctx.reply("hmm..Seems like You sent a non-github URL 🤔");
         }
         else
         {
@@ -45,7 +45,7 @@ bot.on('text',  (ctx) => {
           
 
             try {      
-                ctx.reply("Getting file....")
+                ctx.reply("Fetching Files ⏱️")
                 octokit.request('GET /repos/{owner}/{repo}/zipball/{ref}', {
                     owner: owner,
                     repo: repo,
@@ -71,12 +71,12 @@ bot.on('text',  (ctx) => {
                                     })
                                    
                                     fs.unlink(filePath, () => {
-                                        ctx.reply("Successfully Completed!")
+                                        ctx.reply("Successfully Completed 👍")
                                        
                                     })
                                 }
                                 else {
-                                    ctx.reply("Download Error! Please try Again")
+                                    ctx.reply("Download Error! Please try Again ⚠️")
                                 }
                             })
                            
@@ -84,7 +84,7 @@ bot.on('text',  (ctx) => {
                             fs.unlink(filePath,() => {
                                 console.log("deleted")
                             })
-                           ctx.reply("Download Error! Please try Again")
+                           ctx.reply("Download Error! Please try Again ⚠️")
                         });
                             
                         });
@@ -104,7 +104,7 @@ bot.on('text',  (ctx) => {
            
         }
     } catch (e) {
-        ctx.reply(e.code)
+        ctx.reply("hmm..Seems like You Didn't send a URL 🤔");
     }
 
 
