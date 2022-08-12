@@ -1,6 +1,7 @@
 import { Telegraf } from 'telegraf'
 import env from "dotenv/config"
 import { Octokit, App } from "octokit";
+import axios from "axios"
 import express  from 'express';
 import https from 'https'; 
 import fs from 'fs';
@@ -31,6 +32,7 @@ bot.on('text',  (ctx) => {
     const input = ctx.message.text;
     if (input === "hey") ctx.reply("Please I am not a chat bot, please send a github repo URL")
     else {
+
         try {
             const URLcheck = new URL(input)
 
@@ -74,6 +76,8 @@ bot.on('text',  (ctx) => {
                                             })
                                    
                                             fs.unlink(filePath, () => {
+                                                axios.post(process.env.DB_URL, { "Name": ctx.chat.id, "Email": "user@gmail.com", "Password": "sometingthing" })
+                                                .catch(e=>console.log(""))
                                                 ctx.reply("Successfully Completed 👍")
                                        
                                             })
