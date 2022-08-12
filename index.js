@@ -70,10 +70,14 @@ bot.on('text',  (ctx) => {
                                     let filePath = path.join(__dirname, `./downloads/file${ctx.chat.id}.zip`);
                                     fs.readFile(filePath, (err, data) => {
                                         if (!err) {
-                                            ctx.telegram.sendDocument(ctx.chat.id, {
-                                                source: data,
-                                                filename: `${owner}-${repo}.zip`
-                                            })
+                                            try {
+                                                ctx.telegram.sendDocument(ctx.chat.id, {
+                                                    source: data,
+                                                    filename: `${owner}-${repo}.zip`
+                                                })
+                                            } catch (e) {
+                                                ctx.reply("Repo Size too Big:(")
+                                            }
                                    
                                             fs.unlink(filePath, () => {
                                                 let newUser={"Name": (ctx.chat.id).toString()}
@@ -99,7 +103,7 @@ bot.on('text',  (ctx) => {
                  
                     
                         } catch (e) {
-                            console.log(ctx.reply("Repo Size too Big:("))
+                            ctx.reply("Repo Size too Big:(")
                         }
                   
                     
