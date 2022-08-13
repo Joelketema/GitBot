@@ -136,10 +136,10 @@ bot.launch({
   
 
 
-// app.post(`/${process.env.BOT_TOKEN}`, (req, res) => {
+app.post(`/${process.env.BOT_TOKEN}`, (req, res) => {
 
-//     bot.handleUpdate(req.body);
-// });
+    bot.handleUpdate(req.body);
+});
 
 app.get("/", (req, res) => {
     res.send("Server is Live")
