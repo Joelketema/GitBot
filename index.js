@@ -123,16 +123,23 @@ bot.on('text',  (ctx) => {
 
 }) 
 
-
-bot.startWebhook(process.env.HEROKU_URL + process.env.BOT_TOKEN);
-bot.launch()
-
 const Port = process.env.PORT || 3001 
 
-app.post(`/${process.env.BOT_TOKEN}`, (req, res) => {
+// bot.startWebhook(process.env.HEROKU_URL + process.env.BOT_TOKEN);
+// bot.launch()
+bot.launch({
+    webhook: {
+      domain: process.env.HEROKU_URL + process.env.BOT_TOKEN,
+      port: Number(process.env.PORT),
+    }
+  })
+  
 
-    bot.handleUpdate(req.body);
-});
+
+// app.post(`/${process.env.BOT_TOKEN}`, (req, res) => {
+
+//     bot.handleUpdate(req.body);
+// });
 
 app.get("/", (req, res) => {
     res.send("Server is Live")
