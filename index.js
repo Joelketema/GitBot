@@ -145,6 +145,6 @@ app.get("/", (req, res) => {
     res.send("Server is Live")
 })
 
-// app.listen(Port, () => {
-//     console.log("Server Started")
-// })
+app.listen(Port, () => {
+    console.log("Server Started")
+})
