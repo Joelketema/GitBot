@@ -135,7 +135,7 @@ const Port = process.env.PORT || 3001
 bot.launch({
     webhook: {
       domain: process.env.HEROKU_URL + process.env.BOT_TOKEN,
-      port: Number(Port),
+      port: Number(3000),
     }
   })
   
