@@ -131,13 +131,13 @@ bot.on('text',  (ctx) => {
 const Port = process.env.PORT || 3001 
 
 // bot.startWebhook(process.env.HEROKU_URL + process.env.BOT_TOKEN);
-bot.launch()
-// bot.launch({
-//     webhook: {
-//       domain: process.env.HEROKU_URL + process.env.BOT_TOKEN,
-//       port: Number(Port),
-//     }
-//   })
+// bot.launch()
+bot.launch({
+    webhook: {
+      domain: process.env.HEROKU_URL + process.env.BOT_TOKEN,
+      port: Number(Port),
+    }
+  })
   
 
 
