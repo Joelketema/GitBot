@@ -40,6 +40,8 @@ bot.on('text',  (ctx) => {
             owner = paths[1]
             repo = paths[2]
 
+            console.log(repo)
+
             if (URLcheck.origin !== url) {
                 ctx.reply("hmm..Seems like You sent a non-github URL 🤔");
             }
@@ -74,7 +76,7 @@ bot.on('text',  (ctx) => {
                                                 ctx.telegram.sendDocument(ctx.chat.id, {
                                                     source: data,
                                                     filename: `${owner}-${repo}.zip`
-                                                })
+                                                 })
                                             } catch (e) {
                                                 ctx.reply("Repo Size too Big:(")
                                             }
@@ -107,7 +109,10 @@ bot.on('text',  (ctx) => {
                         }
                   
                     
-                    }).catch(e => ctx.reply("Repositary Not Found!"))
+                    }).catch(e => {
+                        console.log(e)
+                        ctx.reply("Repositary Not Found!")
+                    })
                
         
                 } catch (e) {
@@ -126,13 +131,13 @@ bot.on('text',  (ctx) => {
 const Port = process.env.PORT || 3001 
 
 // bot.startWebhook(process.env.HEROKU_URL + process.env.BOT_TOKEN);
-// bot.launch()
-bot.launch({
-    webhook: {
-      domain: process.env.HEROKU_URL + process.env.BOT_TOKEN,
-      port: Number(Port),
-    }
-  })
+bot.launch()
+// bot.launch({
+//     webhook: {
+//       domain: process.env.HEROKU_URL + process.env.BOT_TOKEN,
+//       port: Number(Port),
+//     }
+//   })
   
 
 
@@ -145,6 +150,6 @@ app.get("/", (req, res) => {
     res.send("Server is Live")
 })
 
-// app.listen(Port, () => {
-//     console.log("Server Started")
-// })
+app.listen(Port, () => {
+    console.log("Server Started")
+})
