@@ -1,155 +1,228 @@
-import { Telegraf } from 'telegraf'
-import env from "dotenv/config"
-import { Octokit, App } from "octokit";
-import axios from "axios"
-import express  from 'express';
-import https from 'https'; 
-import fs from 'fs';
-import path from "path"
+const { Telegraf } = require("telegraf");
+require("dotenv/config");
+const { Octokit, App } = require("octokit");
+const axios = require("axios");
+const express = require("express");
+const https = require("https");
+const fs = require("fs");
+const path = require("path");
 
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+// import { fileURLToPath } from 'url';
+// import { dirname } from 'path';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = dirname(__filename);
 
-const bot = new Telegraf(process.env.BOT_TOKEN) 
-
-
+const bot = new Telegraf(process.env.BOT_TOKEN);
 
 const url = "https://github.com";
 
 const app = express();
-  
+
 var owner = "";
 var repo = "";
 
-bot.start((ctx) => ctx.reply('Welcome! Please Send me a Github Repo URL to Start 👋'))
+bot.start((ctx) =>
+    ctx.reply("Welcome! Please Send me a Github Repo URL to Start 👋")
+);
 
-bot.help((ctx) => ctx.reply('Please Send me a Github Repo URL like(https://github.com/owner/repo) to Start'))
+bot.help((ctx) =>
+    ctx.reply(
+        "Please Send me a Github Repo URL like(https://github.com/owner/repo) to Start"
+    )
+);
 
-bot.on('text',  (ctx) => {
+bot.on("inline_query", async (ctx) => {
+    const input = ctx.inlineQuery.query;
+    try {
+        const octokit = new Octokit({
+            auth: process.env.AUTH,
+        });
+
+        const response = await octokit.request("GET /search/repositories", {
+            headers: {
+                "X-GitHub-Api-Version": "2022-11-28",
+            },
+            q: input,
+        });
+
+        const result = response.data.items.map((item) => {
+            return {
+                id: item.id.toString(),
+                message_text: item.html_url,
+                title: item.full_name,
+                description: item.description,
+                thumb_url: item.owner.avatar_url,
+                type: "article",
+            };
+        });
+        ctx.answerInlineQuery(result);
+    } catch (e) {
+        console.log(e);
+        ctx.answerInlineQuery(["Sorry! No Results Found"]);
+    }
+});
+bot.on("text", (ctx) => {
     const input = ctx.message.text;
-    if (input === "hey") ctx.reply("Please I am not a chat bot, please send a github repo URL")
+    if (input === "hey")
+        ctx.reply("Please I am not a chat bot, please send a github repo URL");
     else {
-
         try {
-            const URLcheck = new URL(input)
+            const URLcheck = new URL(input);
 
-            const paths = URLcheck.pathname.toString().split("/")
-            owner = paths[1]
-            repo = paths[2]
+            const paths = URLcheck.pathname.toString().split("/");
+            owner = paths[1];
+            repo = paths[2];
 
-            console.log(repo)
+            console.log(repo);
 
             if (URLcheck.origin !== url) {
                 ctx.reply("hmm..Seems like You sent a non-github URL 🤔");
-            }
-            else {
-        
+            } else {
                 try {
                     const octokit = new Octokit({
-                        auth: process.env.AUTH
-                    })
+                        auth: process.env.AUTH,
+                    });
 
-                    ctx.reply("Fetching Files ⏱️")
-                    octokit.request('GET /repos/{owner}/{repo}/zipball/{ref}', {
-                        owner: owner,
-                        repo: repo,
-                        ref: ''
-                    }).then(response => {
-                    
-                        try {
-                        
-                            const file = fs.createWriteStream(path.join(__dirname, `./downloads/file${ctx.chat.id}.zip`));
+                    ctx.reply("Fetching Files ⏱️");
+                    octokit
+                        .request("GET /repos/{owner}/{repo}/zipball/{ref}", {
+                            owner: owner,
+                            repo: repo,
+                            ref: "",
+                        })
+                        .then((response) => {
+                            try {
+                                const file = fs.createWriteStream(
+                                    path.join(
+                                        __dirname,
+                                        `./downloads/file${ctx.chat.id}.zip`
+                                    )
+                                );
 
-                            const request = https.get(response.url, function (res) {
-                                res.pipe(file);
-                
-                                file.on("finish", () => {
-                                    file.close();
-                        
-                                    let filePath = path.join(__dirname, `./downloads/file${ctx.chat.id}.zip`);
-                                    fs.readFile(filePath, (err, data) => {
-                                        if (!err) {
-                                            try {
-                                                ctx.telegram.sendDocument(ctx.chat.id, {
-                                                    source: data,
-                                                    filename: `${owner}-${repo}.zip`
-                                                 })
-                                            } catch (e) {
-                                                ctx.reply("Repo Size too Big:(")
-                                            }
-                                   
+                                const request = https.get(
+                                    response.url,
+                                    function (res) {
+                                        res.pipe(file);
+
+                                        file.on("finish", () => {
+                                            file.close();
+
+                                            let filePath = path.join(
+                                                __dirname,
+                                                `./downloads/file${ctx.chat.id}.zip`
+                                            );
+                                            fs.readFile(
+                                                filePath,
+                                                (err, data) => {
+                                                    if (!err) {
+                                                        try {
+                                                            ctx.telegram
+                                                                .sendDocument(
+                                                                    ctx.chat.id,
+                                                                    {
+                                                                        source: data,
+                                                                        filename: `${owner}-${repo}.zip`,
+                                                                    }
+                                                                )
+                                                                .then((res) => {
+                                                                    console.log(
+                                                                        res
+                                                                    );
+                                                                })
+                                                                .catch((e) => {
+                                                                    ctx.reply(
+                                                                        "Repo Size too Big:("
+                                                                    );
+                                                                });
+                                                        } catch (e) {
+                                                            ctx.reply(
+                                                                "Repo Size too Big:("
+                                                            );
+                                                        }
+
+                                                        fs.unlink(
+                                                            filePath,
+                                                            () => {
+                                                                let newUser = {
+                                                                    Name: ctx.chat.id.toString(),
+                                                                };
+                                                                axios
+                                                                    .post(
+                                                                        process
+                                                                            .env
+                                                                            .DB_URL,
+                                                                        newUser
+                                                                    )
+                                                                    .catch(
+                                                                        (e) =>
+                                                                            console.log(
+                                                                                ""
+                                                                            )
+                                                                    );
+                                                                ctx.reply(
+                                                                    "Successfully Completed 👍"
+                                                                );
+                                                            }
+                                                        );
+                                                    } else {
+                                                        ctx.reply(
+                                                            "Download Error! Please try Again ⚠️"
+                                                        );
+                                                    }
+                                                }
+                                            );
+                                        }).on("error", (e) => {
                                             fs.unlink(filePath, () => {
-                                                let newUser={"Name": (ctx.chat.id).toString()}
-                                                axios.post(process.env.DB_URL, newUser)
-                                                .catch(e=>console.log(""))
-                                                ctx.reply("Successfully Completed 👍")
-                                       
-                                            })
-                                        }
-                                        else {
-                                            ctx.reply("Download Error! Please try Again ⚠️")
-                                        }
-                                    })
-                           
-                                }).on("error", (e) => {
-                                    fs.unlink(filePath, () => {
-                                        console.log("deleted")
-                                    })
-                                    ctx.reply("Download Error! Please try Again ⚠️")
-                                });
-                            
-                            });
-                 
-                    
-                        } catch (e) {
-                            ctx.reply("Repo Size too Big:(")
-                        }
-                  
-                    
-                    }).catch(e => {
-                        console.log(e)
-                        ctx.reply("Repositary Not Found!")
-                    })
-               
-        
+                                                console.log("deleted");
+                                            });
+                                            ctx.reply(
+                                                "Download Error! Please try Again ⚠️"
+                                            );
+                                        });
+                                    }
+                                );
+                            } catch (e) {
+                                console.log("error here 3");
+                                console.log(e);
+                                ctx.reply("Repo Size too Big:(");
+                            }
+                        })
+                        .catch((e) => {
+                            console.log("error here 4");
+                            console.log(e);
+
+                            ctx.reply("Repo Not Found!");
+                        });
                 } catch (e) {
-                    console.log(e.data?.message)
+                    console.log(e.data?.message);
                 }
-           
             }
         } catch (e) {
             ctx.reply("hmm..Seems like You Didn't send a URL 🤔");
         }
     }
- 
+});
 
-}) 
-
-const Port = process.env.PORT || 3001 
+const Port = process.env.PORT || 3001;
 
 // bot.startWebhook(process.env.HEROKU_URL + process.env.BOT_TOKEN);
-// bot.launch()
-bot.launch({
-    webhook: {
-      domain: process.env.HEROKU_URL + process.env.BOT_TOKEN,
-      port: Number(3000),
-    }
-  })
-  
-
+bot.launch();
+// bot.launch({
+//     webhook: {
+//       domain: process.env.HEROKU_URL + process.env.BOT_TOKEN,
+//       port: Number(3000),
+//     }
+//   })
 
 app.post(`/${process.env.BOT_TOKEN}`, (req, res) => {
-
     bot.handleUpdate(req.body);
 });
 
 app.get("/", (req, res) => {
-    res.send("Server is Live")
-})
+    res.send("Server is Live");
+});
 
 app.listen(Port, () => {
-    console.log("Server Started")
-})
+    console.log("Server Started");
+});
