@@ -28,7 +28,7 @@ bot.start((ctx) =>
 
 bot.help((ctx) =>
     ctx.reply(
-        "Please Send me a Github Repo URL like(https://github.com/owner/repo) to Start"
+        "Please Send me a Github Repo URL like(https://github.com/owner/repo) to Start or use @githubrepo_download_bot to search for repositories"
     )
 );
 
@@ -45,6 +45,7 @@ bot.on("inline_query", async (ctx) => {
             },
             q: input,
         });
+        console.log(response);
 
         const result = response.data.items.map((item) => {
             return {
@@ -59,7 +60,6 @@ bot.on("inline_query", async (ctx) => {
         ctx.answerInlineQuery(result);
     } catch (e) {
         console.log(e);
-        ctx.answerInlineQuery(["Sorry! No Results Found"]);
     }
 });
 bot.on("text", (ctx) => {
