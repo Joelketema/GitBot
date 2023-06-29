@@ -7,11 +7,7 @@ const https = require("https");
 const fs = require("fs");
 const path = require("path");
 
-// import { fileURLToPath } from 'url';
-// import { dirname } from 'path';
 
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = dirname(__filename);
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
@@ -32,36 +28,7 @@ bot.help((ctx) =>
     )
 );
 
-bot.on("inline_query", async (ctx) => {
-    const input = ctx.inlineQuery.query;
-    try {
-        const octokit = new Octokit({
-            auth: process.env.AUTH,
-        });
 
-        const response = await octokit.request("GET /search/repositories", {
-            headers: {
-                "X-GitHub-Api-Version": "2022-11-28",
-            },
-            q: input,
-        });
-        console.log(response);
-
-        const result = response.data.items.map((item) => {
-            return {
-                id: item.id.toString(),
-                message_text: item.html_url,
-                title: item.full_name,
-                description: item.description,
-                thumb_url: item.owner.avatar_url,
-                type: "article",
-            };
-        });
-        ctx.answerInlineQuery(result);
-    } catch (e) {
-        console.log(e);
-    }
-});
 bot.on("text", (ctx) => {
     const input = ctx.message.text;
     if (input === "hey")
@@ -206,14 +173,7 @@ bot.on("text", (ctx) => {
 
 const Port = process.env.PORT || 3001;
 
-// bot.startWebhook(process.env.HEROKU_URL + process.env.BOT_TOKEN);
 bot.launch();
-// bot.launch({
-//     webhook: {
-//       domain: process.env.HEROKU_URL + process.env.BOT_TOKEN,
-//       port: Number(3000),
-//     }
-//   })
 
 app.post(`/${process.env.BOT_TOKEN}`, (req, res) => {
     bot.handleUpdate(req.body);
